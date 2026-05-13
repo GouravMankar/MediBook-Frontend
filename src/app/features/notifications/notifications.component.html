@@ -1,0 +1,81 @@
+<div class="page-title">
+  {{ role === "ADMIN" ? "Logs / Notifications" : "Notifications" }}
+</div>
+<div class="page-sub">
+  {{
+    role === "ADMIN"
+      ? "Send platform messages and review notification logs."
+      : "In-app notification center connected to notification-service."
+  }}
+</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+
+<div class="card" *ngIf="role === 'ADMIN'" style="margin-bottom: 18px">
+  <h3>Notification Panel</h3>
+  <div class="form-grid">
+    <div>
+      <label>Send To</label>
+      <select [(ngModel)]="bulk.audience">
+        <option value="PATIENTS">All patients</option>
+        <option value="PROVIDERS">All providers</option>
+        <option value="SPECIFIC">Specific user</option>
+      </select>
+    </div>
+
+    <div *ngIf="bulk.audience === 'SPECIFIC'">
+      <label>User ID</label>
+      <input type="number" [(ngModel)]="bulk.recipientId" placeholder="Recipient user ID" />
+    </div>
+
+    <div>
+      <label>Type</label>
+      <input [(ngModel)]="bulk.type" />
+    </div>
+
+    <div>
+      <label>Title</label>
+      <input [(ngModel)]="bulk.title" />
+    </div>
+
+    <div>
+      <label>Channel</label>
+      <select [(ngModel)]="bulk.channel">
+        <option value="APP">APP</option>
+        <option value="EMAIL">EMAIL</option>
+        <option value="SMS">SMS</option>
+      </select>
+    </div>
+  </div>
+
+  <label style="margin-top: 12px">Message</label>
+  <textarea [(ngModel)]="bulk.message"></textarea>
+  <button class="btn" style="margin-top: 14px" (click)="sendBulk()">Send</button>
+</div>
+
+<div class="actions" *ngIf="role !== 'ADMIN'" style="margin-bottom: 18px">
+  <button class="btn light" (click)="readAll()">Mark All Read</button>
+</div>
+
+<div class="grid">
+  <div class="card" *ngFor="let n of notifications()">
+    <div class="actions" style="justify-content: space-between">
+      <h3>{{ n.title }}</h3>
+      <span class="badge" [class.ok]="n.read || n.isRead">
+        {{ n.read || n.isRead ? "Read" : "Unread" }}
+      </span>
+    </div>
+    <p>{{ n.message }}</p>
+    <p class="muted">{{ n.type }} - {{ n.channel }} - {{ displayDate(n) }}</p>
+    <button class="btn light" *ngIf="!(n.read || n.isRead)" (click)="read(n)">
+      Mark Read
+    </button>
+    <button class="btn danger" *ngIf="role === 'ADMIN'" (click)="remove(n)">
+      Delete Log
+    </button>
+  </div>
+</div>
+
+<div class="empty" *ngIf="!notifications().length">
+  No notifications returned from backend.
+</div>

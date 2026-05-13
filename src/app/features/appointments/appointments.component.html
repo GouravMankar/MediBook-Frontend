@@ -1,0 +1,76 @@
+<div class="page-title">Appointments</div>
+<div class="page-sub">
+  {{
+    role === "PROVIDER"
+      ? "Appointments booked with you."
+      : role === "ADMIN"
+        ? "Platform appointment overview when the backend exposes admin data."
+        : "Your booked appointments."
+  }}
+</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading appointments...</div>
+
+<div class="card table-wrap">
+  <h3>Upcoming Appointments</h3>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Patient</th>
+      <th>Provider</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Service</th>
+      <th>Mode</th>
+      <th>Status</th>
+      <th>Action</th>
+    </tr>
+    <tr *ngFor="let a of upcomingAppointments()">
+      <td>#{{ a.appointmentId }}</td>
+      <td>{{ personLabel(a.patientName || a.patientId) }}</td>
+      <td>{{ providerLabel(a) }}</td>
+      <td>{{ a.appointmentDate }}</td>
+      <td>{{ a.startTime }} - {{ a.endTime }}</td>
+      <td>{{ a.serviceType }}</td>
+      <td>{{ a.modeOfConsultation }}</td>
+      <td><span class="badge">{{ a.status }}</span></td>
+      <td class="actions">
+        <button class="btn light" *ngIf="canCancel(a)" (click)="cancel(a)">Cancel</button>
+        <button class="btn success" *ngIf="canComplete(a)" (click)="complete(a)">Complete</button>
+      </td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !upcomingAppointments().length">
+    No upcoming appointments returned from backend.
+  </div>
+</div>
+
+<div class="card table-wrap" style="margin-top:18px">
+  <h3>Past Appointments</h3>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Patient</th>
+      <th>Provider</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Service</th>
+      <th>Mode</th>
+      <th>Status</th>
+    </tr>
+    <tr *ngFor="let a of historyAppointments()">
+      <td>#{{ a.appointmentId }}</td>
+      <td>{{ personLabel(a.patientName || a.patientId) }}</td>
+      <td>{{ providerLabel(a) }}</td>
+      <td>{{ a.appointmentDate }}</td>
+      <td>{{ a.startTime }} - {{ a.endTime }}</td>
+      <td>{{ a.serviceType }}</td>
+      <td>{{ a.modeOfConsultation }}</td>
+      <td><span class="badge ok" *ngIf="(a.status || '').toUpperCase() === 'COMPLETED'">Completed</span><span class="badge" *ngIf="(a.status || '').toUpperCase() !== 'COMPLETED'">{{ a.status }}</span></td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !historyAppointments().length">
+    No appointment history yet.
+  </div>
+</div>

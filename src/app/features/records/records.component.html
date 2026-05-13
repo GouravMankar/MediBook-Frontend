@@ -1,0 +1,36 @@
+<div class="page-title">Medical Records</div>
+<div class="page-sub">Records are loaded from record-service. Providers can create records for completed appointments.</div>
+<div class="empty" *ngIf="message">{{ message }}</div>
+
+<div class="card" *ngIf="role === 'PROVIDER'" style="margin-bottom:18px">
+  <h3>Create Medical Record</h3>
+  <div class="form-grid">
+    <div>
+      <label>Completed Appointment</label>
+      <select [(ngModel)]="form.appointmentId">
+        <option [ngValue]="undefined">Select appointment</option>
+        <option *ngFor="let a of appointments()" [ngValue]="a.appointmentId">
+          #{{ a.appointmentId }} - Patient {{ a.patientName || a.patientId }}
+        </option>
+      </select>
+    </div>
+    <div><label>Follow-up Date</label><input type="date" [(ngModel)]="form.followUpDate"></div>
+    <div><label>Diagnosis</label><input [(ngModel)]="form.diagnosis"></div>
+    <div><label>Prescription</label><input [(ngModel)]="form.prescription"></div>
+  </div>
+  <label style="margin-top:12px">Clinical Notes</label>
+  <textarea [(ngModel)]="form.notes"></textarea>
+  <button class="btn" style="margin-top:14px" (click)="create()">Save Record</button>
+</div>
+
+<div class="grid grid-2">
+  <div class="card" *ngFor="let r of records()">
+    <h3>{{ r.diagnosis || "Medical Record" }}</h3>
+    <p class="muted">Appointment #{{ r.appointmentId }} - Patient {{ r.patientId }} - Provider {{ providerName(r.providerId) }}</p>
+    <p><b>Prescription:</b> {{ r.prescription || "-" }}</p>
+    <p>{{ r.notes }}</p>
+    <span class="badge" *ngIf="r.followUpDate">Follow-up {{ r.followUpDate }}</span>
+  </div>
+</div>
+
+<div class="empty" *ngIf="!records().length">No medical records returned from backend.</div>

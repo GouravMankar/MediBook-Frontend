@@ -1,0 +1,50 @@
+<div class="page-title">My Profile</div>
+<div class="page-sub">
+  Update your patient profile information so your account stays current.
+</div>
+
+<form class="card" [formGroup]="form" (ngSubmit)="save()">
+  <div class="form-grid">
+    <div>
+      <label>Name *</label>
+      <input formControlName="fullName" placeholder="Your full name" />
+    </div>
+    <div>
+      <label>Email *</label>
+      <input type="email" formControlName="email" placeholder="Your email" />
+      <small
+        class="field-error"
+        *ngIf="form.controls.email.touched && form.controls.email.invalid"
+      >
+        Enter a valid email address
+      </small>
+    </div>
+    <div>
+      <label>Phone</label>
+      <input formControlName="phone" placeholder="Phone number" />
+      <small
+        class="field-error"
+        *ngIf="form.controls.phone.touched && form.controls.phone.invalid"
+      >
+        Enter a valid 10-digit Indian mobile number
+      </small>
+    </div>
+  </div>
+
+  <div class="actions" style="margin-top: 18px">
+    <button class="btn success" type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? "Saving..." : "Save Profile" }}
+    </button>
+    <button
+      class="btn light"
+      type="button"
+      (click)="cancel()"
+      [disabled]="loading"
+    >
+      Cancel
+    </button>
+  </div>
+
+  <div class="empty success-box" *ngIf="success">{{ success }}</div>
+  <div class="empty" *ngIf="message">{{ message }}</div>
+</form>

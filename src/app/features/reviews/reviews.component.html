@@ -1,0 +1,33 @@
+<div class="page-title">Reviews</div>
+<div class="page-sub">Patient, Provider, and Admin review flows connected to review-service.</div>
+<div class="empty" *ngIf="message">{{ message }}</div>
+
+<div class="grid grid-3" style="margin-bottom:18px">
+  <div class="card stat"><span class="muted">Total Reviews</span><br><strong>{{ reviews().length }}</strong></div>
+  <div class="card stat"><span class="muted">Average Rating</span><br><strong>{{ avg() }}</strong></div>
+  <div class="card stat"><span class="muted">Role View</span><br><strong>{{ role }}</strong></div>
+</div>
+
+<div class="card" *ngIf="role === 'PATIENT'" style="margin-bottom:18px">
+  <h3>Submit Review</h3>
+  <div class="form-grid">
+    <div><label>Appointment ID</label><input type="number" [(ngModel)]="form.appointmentId"></div>
+    <div><label>Provider ID</label><input type="number" [(ngModel)]="form.providerId"></div>
+    <div><label>Rating</label><input type="number" min="1" max="5" [(ngModel)]="form.rating"></div>
+    <div><label>Anonymous</label><select [(ngModel)]="form.isAnonymous"><option [ngValue]="false">No</option><option [ngValue]="true">Yes</option></select></div>
+  </div>
+  <label style="margin-top:12px">Comment</label>
+  <textarea [(ngModel)]="form.comment"></textarea>
+  <button class="btn" style="margin-top:14px" (click)="add()">Submit Review</button>
+</div>
+
+<div class="grid grid-2">
+  <div class="card" *ngFor="let r of reviews()">
+    <h3>{{ stars(r.rating) }}</h3>
+    <p>{{ r.comment }}</p>
+    <p class="muted">Provider {{ providerName(r.providerId) }} - {{ patientName(r) }} - Appointment {{ r.appointmentId }}</p>
+    <button class="btn danger" *ngIf="role === 'ADMIN'" (click)="remove(r)">Remove</button>
+  </div>
+</div>
+
+<div class="empty" *ngIf="!reviews().length">No reviews returned from backend.</div>

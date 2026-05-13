@@ -1,0 +1,44 @@
+<div class="page-title">Manage Providers</div>
+<div class="page-sub">Approve, reject, block, unblock, remove, and search providers.</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading providers...</div>
+
+<div class="card" style="margin-bottom:18px">
+  <div class="form-grid">
+    <div>
+      <label>Search providers</label>
+      <input [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Name, email, specialization, clinic, status" />
+    </div>
+  </div>
+</div>
+
+<div class="card table-wrap">
+  <table class="table">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Specialization</th>
+      <th>Clinic</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    <tr *ngFor="let provider of filteredProviders()">
+      <td>{{ providerName(provider) }}</td>
+      <td>{{ provider.email || provider.user?.email || "-" }}</td>
+      <td>{{ provider.specialization || "-" }}</td>
+      <td>{{ provider.clinicName || "-" }}</td>
+      <td><span class="badge" [class.ok]="statusLabel(provider) === 'Approved'">{{ statusLabel(provider) }}</span></td>
+      <td class="actions">
+        <button class="btn success" *ngIf="statusLabel(provider) === 'Pending'" (click)="approve(provider)">Approve</button>
+        <button class="btn danger" *ngIf="statusLabel(provider) === 'Pending'" (click)="reject(provider)">Reject</button>
+        <button class="btn light" (click)="setAvailable(provider, true)">Available</button>
+        <button class="btn light" (click)="setAvailable(provider, false)">Unavailable</button>
+        <button class="btn danger" *ngIf="!isBlocked(provider)" (click)="block(provider)">Block</button>
+        <button class="btn light" *ngIf="isBlocked(provider)" (click)="unblock(provider)">Unblock</button>
+        <button class="btn danger" (click)="delete(provider)">Delete</button>
+      </td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !filteredProviders().length">No providers found.</div>
+</div>

@@ -1,0 +1,175 @@
+<section class="landing" *ngIf="isGuest(); else appProviders">
+  <header class="public-nav">
+    <button class="public-brand public-link-button" type="button" (click)="scrollToSection('top')">
+      <span class="brand-mark">MB</span>
+      <span>MediBook</span>
+    </button>
+    <nav class="public-links" aria-label="Public navigation">
+      <button type="button" (click)="scrollToSection('providers')">Providers</button>
+      <button type="button" (click)="scrollToSection('about')">About</button>
+      <button type="button" (click)="scrollToSection('care')">Care</button>
+    </nav>
+    <div class="public-actions">
+      <a class="btn light" routerLink="/login">Login</a>
+      <a class="btn" routerLink="/register">Sign up</a>
+    </div>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="hero-media" aria-hidden="true"></div>
+    <div class="hero-content">
+      <p class="eyebrow">Healthcare appointments, simplified</p>
+      <h1>MediBook</h1>
+      <p class="hero-copy">
+        Find trusted providers, compare ratings, check real availability, and
+        book care when you are ready.
+      </p>
+      <div class="hero-actions">
+        <button class="btn" type="button" (click)="scrollToSection('providers')">Find providers</button>
+        <a class="btn light" routerLink="/login">Login to book</a>
+      </div>
+      <div class="hero-stats" aria-label="MediBook highlights">
+        <span><strong>{{ providers().length }}</strong> providers</span>
+        <span><strong>24/7</strong> slot browsing</span>
+        <span><strong>Secure</strong> patient access</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="intro-band" id="about">
+    <div>
+      <h2>Care starts before the visit.</h2>
+      <p>
+        MediBook helps patients explore provider profiles, fees, availability,
+        ratings, and reviews before signing in. Booking, payments, reports, and
+        dashboards stay protected behind your account.
+      </p>
+    </div>
+    <div class="feature-row" id="care">
+      <div class="feature-item">
+        <strong>Verified profiles</strong>
+        <span>Specialization, clinic details, ratings, and reviews in one place.</span>
+      </div>
+      <div class="feature-item">
+        <strong>Live availability</strong>
+        <span>Browse open slots first, then log in only when you want to book.</span>
+      </div>
+      <div class="feature-item">
+        <strong>Patient workspace</strong>
+        <span>Appointments, payments, refunds, and medical reports after login.</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="provider-section" id="providers">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">Browse care</p>
+        <h2>Find the right provider</h2>
+      </div>
+      <div class="search-panel">
+        <input
+          [(ngModel)]="query"
+          (keyup.enter)="search()"
+          placeholder="Search name, specialization, clinic, or location"
+        />
+        <button class="btn" (click)="search()" [disabled]="loading">
+          {{ loading ? "Searching..." : "Search" }}
+        </button>
+      </div>
+    </div>
+
+    <div class="empty" *ngIf="message">{{ message }}</div>
+
+    <div class="provider-grid">
+      <ng-container *ngTemplateOutlet="providerCards"></ng-container>
+    </div>
+  </section>
+</section>
+
+<ng-template #appProviders>
+  <div class="page-title">
+    {{ role === "ADMIN" ? "Providers" : "Find Providers" }}
+  </div>
+  <div class="page-sub">
+    Browse verified provider profiles and open a dedicated slot page to book.
+  </div>
+
+  <div class="card search-card">
+    <div class="form-grid">
+      <div>
+        <label>Search by name / specialization / location</label>
+        <input
+          [(ngModel)]="query"
+          (keyup.enter)="search()"
+          placeholder="Type keyword"
+        />
+      </div>
+      <div class="search-button-cell">
+        <button class="btn" (click)="search()" [disabled]="loading">
+          {{ loading ? "Searching..." : "Search" }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty" *ngIf="message">{{ message }}</div>
+
+  <div class="grid grid-2">
+    <ng-container *ngTemplateOutlet="providerCards"></ng-container>
+  </div>
+</ng-template>
+
+<ng-template #providerCards>
+  <div class="card provider-card" *ngFor="let p of providers()">
+    <div class="provider-head">
+      <div class="avatar">{{ providerInitials(p) }}</div>
+      <div class="provider-info">
+        <h3>{{ providerName(p) }}</h3>
+        <p class="muted">
+          {{ p.specialization || "Specialization not updated" }} -
+          {{ p.experienceYears || 0 }} yrs
+        </p>
+        <p>{{ p.qualification || "Qualification not updated" }}</p>
+        <p class="muted" *ngIf="providerEmail(p)">{{ providerEmail(p) }}</p>
+        <p class="muted">
+          {{ p.clinicName || "Clinic not updated" }}
+          {{ p.clinicAddress ? "- " + p.clinicAddress : "" }}
+        </p>
+        <p class="muted">
+          Consultation fee: Rs {{ p.consultationFee ?? p.fee ?? "Not set" }}
+        </p>
+        <p class="rating-line">
+          <span class="stars">{{ stars(p.avgRating) }}</span>
+          <span>{{ ratingLabel(p) }}</span>
+        </p>
+        <span class="badge" [class.ok]="p.verified || p.isVerified">
+          {{ p.verified || p.isVerified ? "Verified" : "Pending Verification" }}
+        </span>
+      </div>
+    </div>
+    <div class="actions provider-actions">
+      <button
+        class="btn light"
+        *ngIf="role === 'PATIENT' || role === 'GUEST'"
+        (click)="openSlots(p)"
+      >
+        View Slots
+      </button>
+      <a class="btn" *ngIf="role === 'GUEST'" routerLink="/login">
+        Login to Book
+      </a>
+      <button
+        class="btn success"
+        *ngIf="role === 'ADMIN' && !(p.verified || p.isVerified)"
+        (click)="verify(p)"
+      >
+        Approve
+      </button>
+    </div>
+  </div>
+
+  <div class="empty full-row" *ngIf="!loading && !providers().length">
+    No providers returned from backend.
+  </div>
+</ng-template>

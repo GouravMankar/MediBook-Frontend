@@ -1,0 +1,40 @@
+.form-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.full-width {
+  grid-column: 1 / -1;
+}
+textarea {
+  width: 100%;
+  min-height: 120px;
+}
+input,
+textarea {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.success-box {
+  background: #e6ffed;
+  border: 1px solid #1f9d55;
+  padding: 10px;
+  color: #1f4d25;
+  border-radius: 4px;
+  margin-top: 16px;
+}
+.empty {
+  margin-top: 16px;
+}

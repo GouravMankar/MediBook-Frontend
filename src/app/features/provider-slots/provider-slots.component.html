@@ -1,0 +1,138 @@
+<div class="page-title">Available Slots</div>
+<div class="page-sub">
+  Select an appointment slot with {{ providerName() }}. Available slots are
+  shown below and payment will open Razorpay checkout for the provider fee.
+</div>
+
+<div class="actions" style="margin-bottom: 18px">
+  <a class="btn light" routerLink="/providers">Back to Providers</a>
+</div>
+
+<div class="empty success-box" *ngIf="success">{{ success }}</div>
+<div class="empty" *ngIf="message">{{ message }}</div>
+
+<div class="card provider-summary" *ngIf="provider() as p">
+  <div class="avatar">{{ providerName(p).slice(0, 2).toUpperCase() }}</div>
+  <div>
+    <h3>{{ providerName(p) }}</h3>
+    <p class="muted">
+      {{ p.specialization || "Specialization not updated" }} -
+      {{ p.experienceYears || 0 }} yrs
+    </p>
+    <p>{{ p.qualification || "Qualification not updated" }}</p>
+    <p class="muted">
+      {{ p.clinicName || "Clinic not updated" }}
+      {{ p.clinicAddress ? "- " + p.clinicAddress : "" }}
+    </p>
+  </div>
+  <div class="fee">
+    <span class="muted">Consultation Fee</span>
+    <strong>Rs {{ amount }}</strong>
+  </div>
+</div>
+
+<div class="card filters">
+  <div class="form-grid">
+    <div>
+      <label>Date</label>
+      <input
+        type="date"
+        [(ngModel)]="selectedDate"
+        [min]="minDate"
+        (change)="loadSlots()"
+      />
+    </div>
+    <div>
+      <label>Mode</label>
+      <select [(ngModel)]="modeOfConsultation">
+        <option value="IN_PERSON">In person</option>
+        <option value="ONLINE">Online</option>
+      </select>
+    </div>
+    <div>
+      <label>Payment Mode</label>
+      <select [(ngModel)]="paymentMode">
+        <option value="UPI">UPI</option>
+        <option value="CARD">Card</option>
+        <option value="NETBANKING">Netbanking</option>
+        <option value="WALLET">Wallet</option>
+      </select>
+    </div>
+    <div>
+      <label>Time</label>
+      <select [(ngModel)]="selectedSlotId">
+        <option [ngValue]="null" disabled>Select a time slot</option>
+        <option
+          *ngFor="let slot of slots()"
+          [ngValue]="slot.slotId"
+          [disabled]="isUnavailable(slot)"
+        >
+          {{ slot.startTime }} - {{ slot.endTime }}
+          {{ isUnavailable(slot) ? " (Unavailable)" : "" }}
+        </option>
+      </select>
+    </div>
+  </div>
+  <div style="display: flex; gap: 12px; margin-top: 12px; align-items: center">
+    <button
+      class="btn success"
+      *ngIf="canBook()"
+      [disabled]="!selectedSlotId || bookingSlotId"
+      (click)="bookSelectedSlot()"
+    >
+      {{ bookingSlotId ? "Booking..." : "Book Slot" }}
+    </button>
+    <a
+      class="btn success"
+      *ngIf="!isLoggedIn()"
+      routerLink="/login"
+      [queryParams]="{ returnUrl: '/providers/' + providerId + '/slots' }"
+      >Login to Book</a
+    >
+    <button class="btn light" (click)="loadSlots()" [disabled]="loading">
+      Refresh
+    </button>
+  </div>
+  <p class="muted payment-note">
+    Payment opens Razorpay Checkout with UPI, QR, card, netbanking, and wallet
+    options when enabled on your Razorpay account.
+  </p>
+</div>
+
+<div class="grid grid-3 slots-grid">
+  <div
+    class="card slot-card"
+    *ngFor="let slot of slots()"
+    [class.unavailable]="isUnavailable(slot)"
+  >
+    <span
+      class="badge"
+      [class.bad]="isUnavailable(slot)"
+      [class.ok]="!isUnavailable(slot)"
+    >
+      {{ isUnavailable(slot) ? "Unavailable" : "Available" }}
+    </span>
+    <h3>{{ slot.startTime }} - {{ slot.endTime }}</h3>
+    <p class="muted">{{ slot.date }}</p>
+    <button
+      class="btn"
+      *ngIf="canBook()"
+      [disabled]="isUnavailable(slot) || bookingSlotId === slot.slotId"
+      (click)="book(slot)"
+    >
+      {{ bookingSlotId === slot.slotId ? "Processing..." : "Book Slot" }}
+    </button>
+    <a
+      class="btn light"
+      *ngIf="!isLoggedIn()"
+      routerLink="/login"
+      [queryParams]="{ returnUrl: '/providers/' + providerId + '/slots' }"
+      >Login to Book</a
+    >
+  </div>
+</div>
+
+<div class="empty" *ngIf="loading">Loading slots...</div>
+<div class="empty" *ngIf="!loading && !slots().length">
+  No available slots for selected date.
+</div>

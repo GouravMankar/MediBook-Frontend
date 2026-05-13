@@ -1,0 +1,73 @@
+<div class="page-title">Admin Dashboard</div>
+<div class="page-sub">Manage providers, manage patients, and review platform notification logs.</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading provider requests...</div>
+
+<div class="grid grid-4" style="margin-bottom:18px">
+  <div class="card stat"><span class="muted">Providers</span><br /><strong>{{ providers().length }}</strong></div>
+  <div class="card stat"><span class="muted">Patients</span><br /><strong>{{ patients().length }}</strong></div>
+  <div class="card stat"><span class="muted">Pending Providers</span><br /><strong>{{ pendingProviderRequests().length }}</strong></div>
+  <div class="card stat"><span class="muted">Reviews</span><br /><strong>{{ reviews().length }}</strong></div>
+</div>
+
+<div class="card table-wrap">
+  <h3>Pending Provider Verification</h3>
+  <table class="table">
+    <tr>
+      <th>Provider</th>
+      <th>Email</th>
+      <th>Specialization</th>
+      <th>Clinic</th>
+      <th>Experience</th>
+      <th>Action</th>
+    </tr>
+    <tr *ngFor="let p of pendingProviderRequests()">
+      <td>{{ providerName(p) }}</td>
+      <td>{{ p.email || p.user?.email || "-" }}</td>
+      <td>{{ p.specialization || "-" }}</td>
+      <td>{{ p.clinicName || "-" }}</td>
+      <td>{{ p.experienceYears || 0 }} yrs</td>
+      <td class="actions">
+        <button class="btn success" (click)="approve(p)">Approve</button>
+        <button class="btn danger" (click)="reject(p)">Reject</button>
+      </td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !pendingProviderRequests().length">No pending provider requests.</div>
+</div>
+
+<div class="grid grid-2" style="margin-top:18px">
+  <div class="card table-wrap">
+    <h3>Manage Providers</h3>
+    <table class="table">
+      <tr><th>Name</th><th>Specialization</th><th>Status</th><th>Action</th></tr>
+      <tr *ngFor="let p of providers()">
+        <td>{{ providerName(p) }}</td>
+        <td>{{ p.specialization || "-" }}</td>
+        <td><span class="badge" [class.ok]="isVerified(p)">{{ isVerified(p) ? "Verified" : "Pending" }}</span></td>
+        <td class="actions">
+          <button class="btn danger" *ngIf="!isBlockedProvider(p)" (click)="blockProvider(p)">Block</button>
+          <button class="btn light" *ngIf="isBlockedProvider(p)" (click)="unblockProvider(p)">Unblock</button>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="card table-wrap">
+    <h3>Manage Patients</h3>
+    <table class="table">
+      <tr><th>Name</th><th>Email</th><th>Status</th><th>Action</th></tr>
+      <tr *ngFor="let patient of patients()">
+        <td>{{ patientName(patient) }}</td>
+        <td>{{ patient.email }}</td>
+        <td><span class="badge" [class.ok]="!isBlockedUser(patient)">{{ isBlockedUser(patient) ? "Blocked" : "Active" }}</span></td>
+        <td class="actions">
+          <button class="btn danger" *ngIf="!isBlockedUser(patient)" (click)="blockPatient(patient)">Block</button>
+          <button class="btn light" *ngIf="isBlockedUser(patient)" (click)="unblockPatient(patient)">Unblock</button>
+        </td>
+      </tr>
+    </table>
+    <div class="empty" *ngIf="!patients().length">No patients returned from backend.</div>
+  </div>
+</div>

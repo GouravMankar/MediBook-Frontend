@@ -1,0 +1,82 @@
+<div class="page-title">Provider Profile</div>
+<div class="page-sub">
+  Update account details and professional provider information.
+</div>
+
+<form class="card" [formGroup]="form" (ngSubmit)="save()">
+  <div class="form-grid">
+    <div>
+      <label>Name *</label>
+      <input formControlName="fullName" placeholder="Full name" />
+    </div>
+    <div>
+      <label>Email *</label>
+      <input type="email" formControlName="email" placeholder="Email" />
+      <small
+        class="field-error"
+        *ngIf="form.controls.email.touched && form.controls.email.invalid"
+      >
+        Enter a valid email address
+      </small>
+    </div>
+    <div>
+      <label>Phone</label>
+      <input formControlName="phone" placeholder="Phone number" />
+      <small
+        class="field-error"
+        *ngIf="form.controls.phone.touched && form.controls.phone.invalid"
+      >
+        Enter a valid 10-digit Indian mobile number
+      </small>
+    </div>
+    <div>
+      <label>Specialization *</label>
+      <input formControlName="specialization" placeholder="e.g. Cardiologist" />
+    </div>
+    <div>
+      <label>Qualification</label>
+      <input formControlName="qualification" placeholder="e.g. MBBS, MD" />
+    </div>
+    <div>
+      <label>Experience (years)</label>
+      <input type="number" formControlName="experienceYears" min="0" />
+    </div>
+    <div>
+      <label>Consultation Fee</label>
+      <input type="number" formControlName="consultationFee" min="0" />
+    </div>
+    <div>
+      <label>Clinic Name</label>
+      <input formControlName="clinicName" placeholder="e.g. MediBook Clinic" />
+    </div>
+    <div>
+      <label>Clinic Address</label>
+      <input formControlName="clinicAddress" placeholder="Location or full address" />
+    </div>
+    <div class="full-width">
+      <label>Bio</label>
+      <textarea
+        formControlName="bio"
+        rows="5"
+        placeholder="Tell patients about your expertise"
+      ></textarea>
+    </div>
+  </div>
+
+  <div class="actions" style="margin-top: 18px">
+    <button class="btn success" type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? "Saving..." : "Update Profile" }}
+    </button>
+    <button
+      class="btn light"
+      type="button"
+      (click)="router.navigate(['/provider/dashboard'])"
+      [disabled]="loading"
+    >
+      Cancel
+    </button>
+  </div>
+
+  <div class="empty success-box" *ngIf="success">{{ success }}</div>
+  <div class="empty" *ngIf="message">{{ message }}</div>
+</form>

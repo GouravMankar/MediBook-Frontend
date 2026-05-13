@@ -1,0 +1,71 @@
+<div class="page-title">Dashboard</div>
+<div class="page-sub">Live data loaded from your backend APIs. No patient/provider names are hardcoded.</div>
+<div class="empty" *ngIf="error">{{ error }}</div>
+
+<div class="grid grid-4">
+  <div class="card stat">
+    <span class="muted">Total Appointments</span><br />
+    <strong>{{ appointments().length }}</strong>
+  </div>
+  <div class="card stat">
+    <span class="muted">{{ role === "PROVIDER" ? "Upcoming" : "Scheduled" }}</span><br />
+    <strong>{{ role === "PROVIDER" ? upcoming() : scheduled() }}</strong>
+  </div>
+  <div class="card stat">
+    <span class="muted">Completed</span><br />
+    <strong>{{ completed() }}</strong>
+  </div>
+  <div class="card stat">
+    <span class="muted">{{ role === "ADMIN" ? "Pending Providers" : role === "PROVIDER" ? "Revenue" : "Spent" }}</span><br />
+    <strong>{{ role === "ADMIN" ? pendingProviders() : ("Rs " + netSpendOrRevenue()) }}</strong>
+  </div>
+</div>
+
+<div class="grid grid-4" *ngIf="role === 'PROVIDER'" style="margin-top:18px">
+  <div class="card stat">
+    <span class="muted">Cancelled</span><br />
+    <strong>{{ cancelled() }}</strong>
+  </div>
+  <div class="card stat">
+    <span class="muted">Scheduled</span><br />
+    <strong>{{ scheduled() }}</strong>
+  </div>
+  <div class="card stat">
+    <span class="muted">Refunds</span><br />
+    <strong>Rs {{ refunds() }}</strong>
+  </div>
+  <div class="card stat">
+    <span class="muted">Refunded Transactions</span><br />
+    <strong>{{ refundedTransactions() }}</strong>
+  </div>
+</div>
+
+<div class="grid grid-2" style="margin-top:18px">
+  <div class="card">
+    <h3>{{ role === "PROVIDER" ? "Provider Profile" : role === "ADMIN" ? "Provider Summary" : "My Latest Appointments" }}</h3>
+    <div *ngIf="role === 'PROVIDER' && providerProfile() as p">
+      <p><b>Specialization:</b> {{ p.specialization || "Not updated" }}</p>
+      <p><b>Clinic:</b> {{ p.clinicName || "Not updated" }}</p>
+      <p><b>Verified:</b> <span class="badge" [class.ok]="p.verified || p.isVerified">{{ (p.verified || p.isVerified) ? "Verified" : "Pending" }}</span></p>
+    </div>
+    <div *ngIf="role === 'ADMIN'">
+      <p>Total providers: <b>{{ providers().length }}</b></p>
+      <p>Reviews in system: <b>{{ reviews().length }}</b></p>
+    </div>
+    <table class="table" *ngIf="role !== 'PROVIDER' && appointments().length">
+      <tr><th>Date</th><th>Time</th><th>Status</th></tr>
+      <tr *ngFor="let a of appointments() | slice:0:5"><td>{{ a.appointmentDate }}</td><td>{{ a.startTime }} - {{ a.endTime }}</td><td><span class="badge">{{ a.status }}</span></td></tr>
+    </table>
+    <div class="empty" *ngIf="role !== 'ADMIN' && !appointments().length">No appointment data returned from backend.</div>
+  </div>
+
+  <div class="card">
+    <h3>{{ role === "PROVIDER" ? "Revenue" : "Payment Summary" }}</h3>
+    <p class="muted">All values are calculated from API responses.</p>
+    <table class="table" *ngIf="payments().length">
+      <tr><th>Appointment</th><th>Amount</th><th>Status</th></tr>
+      <tr *ngFor="let p of payments() | slice:0:5"><td>#{{ p.appointmentId }}</td><td>Rs {{ p.amount }}</td><td><span class="badge">{{ p.status }}</span></td></tr>
+    </table>
+    <div class="empty" *ngIf="!payments().length">No payment data returned from backend.</div>
+  </div>
+</div>

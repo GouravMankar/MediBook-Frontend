@@ -1,0 +1,38 @@
+<div class="page-title">Payments</div>
+<div class="page-sub">Read-only transaction history. Refunded payments are excluded from total spent.</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading payments...</div>
+
+<div class="grid grid-3" style="margin-bottom:18px">
+  <div class="card stat"><span class="muted">All Transactions</span><br><strong>{{ payments().length }}</strong></div>
+  <div class="card stat"><span class="muted">Total Spent</span><br><strong>Rs {{ totalSpent() }}</strong></div>
+  <div class="card stat"><span class="muted">Total Refunds</span><br><strong>Rs {{ totalRefunds() }}</strong></div>
+</div>
+
+<div class="card table-wrap">
+  <h3>Transaction History</h3>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Appointment</th>
+      <th>Amount</th>
+      <th>Mode</th>
+      <th>Status</th>
+      <th>Transaction</th>
+      <th>Paid At</th>
+      <th>Refunded At</th>
+    </tr>
+    <tr *ngFor="let payment of payments()">
+      <td>#{{ payment.paymentId }}</td>
+      <td>#{{ payment.appointmentId }}</td>
+      <td>Rs {{ payment.amount }}</td>
+      <td>{{ payment.mode }}</td>
+      <td><span class="badge" [class.ok]="isRefunded(payment)">{{ payment.status }}</span></td>
+      <td>{{ payment.transactionId || "-" }}</td>
+      <td>{{ payment.paidAt || "-" }}</td>
+      <td>{{ payment.refundedAt || "-" }}</td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !payments().length">No payments returned from backend.</div>
+</div>

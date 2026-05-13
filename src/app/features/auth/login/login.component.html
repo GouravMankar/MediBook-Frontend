@@ -1,0 +1,78 @@
+<div class="auth-shell">
+  <section>
+    <div class="brand-large">🏥 MediBook</div>
+
+    <h1>
+      Book Smarter.<br />
+      Heal Faster.<br />
+      Care Better.
+    </h1>
+
+    <p>
+      Angular frontend connected with your Spring Boot microservices through the
+      API Gateway.
+    </p>
+  </section>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="card auth-card">
+    <h2>Welcome back</h2>
+    <p class="muted">Login using backend credentials.</p>
+
+    <div class="oauth-row">
+      <button type="button" class="oauth-btn" (click)="loginWithGoogle()">
+        🔵 Google
+      </button>
+
+      <button type="button" class="oauth-btn" (click)="loginWithGithub()">
+        ⚫ GitHub
+      </button>
+    </div>
+
+    <div class="divider">
+      <span>or continue with email</span>
+    </div>
+
+    <label>Email</label>
+    <input
+      formControlName="email"
+      type="email"
+      placeholder="Enter email from backend"
+    />
+
+    <small
+      class="field-error"
+      *ngIf="form.controls.email.touched && form.controls.email.invalid"
+    >
+      Valid email is required
+    </small>
+
+    <label>Password</label>
+    <input
+      formControlName="password"
+      type="password"
+      placeholder="Enter password"
+    />
+
+    <small
+      class="field-error"
+      *ngIf="form.controls.password.touched && form.controls.password.invalid"
+    >
+      Password is required
+    </small>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+    <button class="btn" type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? "Signing in..." : "Sign in" }}
+    </button>
+
+    <p class="register-link">
+      <a routerLink="/forgot-password">Forgot password?</a>
+    </p>
+
+    <p class="register-link">
+      Don’t have an account?
+      <a routerLink="/register">Create account</a>
+    </p>
+  </form>
+</div>

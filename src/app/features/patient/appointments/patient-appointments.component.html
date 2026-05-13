@@ -1,0 +1,61 @@
+<div class="page-title">Appointments</div>
+<div class="page-sub">Cancel appointments, track refund status, and review past visits.</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading appointments...</div>
+
+<div class="card table-wrap">
+  <h3>Upcoming Appointments</h3>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Provider</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Status</th>
+      <th>Payment / Refund</th>
+      <th>Action</th>
+    </tr>
+    <tr *ngFor="let appointment of upcomingAppointments()">
+      <td>#{{ appointment.appointmentId }}</td>
+      <td>{{ providerLabel(appointment) }}</td>
+      <td>{{ appointment.appointmentDate }}</td>
+      <td>{{ appointment.startTime }} - {{ appointment.endTime }}</td>
+      <td><span class="badge">{{ appointment.status }}</span></td>
+      <td><span class="badge" [class.ok]="isRefunded(appointment)">{{ paymentStatus(appointment) }}</span></td>
+      <td>
+        <button class="btn light" *ngIf="canCancel(appointment)" [disabled]="cancellingId === appointment.appointmentId" (click)="cancel(appointment)">
+          {{ cancellingId === appointment.appointmentId ? "Cancelling..." : "Cancel" }}
+        </button>
+      </td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !upcomingAppointments().length">
+    No upcoming appointments.
+  </div>
+</div>
+
+<div class="card table-wrap" style="margin-top:18px">
+  <h3>Past Appointments</h3>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Provider</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Status</th>
+      <th>Payment / Refund</th>
+    </tr>
+    <tr *ngFor="let appointment of pastAppointments()">
+      <td>#{{ appointment.appointmentId }}</td>
+      <td>{{ providerLabel(appointment) }}</td>
+      <td>{{ appointment.appointmentDate }}</td>
+      <td>{{ appointment.startTime }} - {{ appointment.endTime }}</td>
+      <td><span class="badge" [class.ok]="(appointment.status || '').toUpperCase() === 'COMPLETED'">{{ appointment.status }}</span></td>
+      <td><span class="badge" [class.ok]="isRefunded(appointment)">{{ paymentStatus(appointment) }}</span></td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !pastAppointments().length">
+    No past appointments.
+  </div>
+</div>

@@ -1,0 +1,38 @@
+<div class="page-title">Admin Dashboard</div>
+<div class="page-sub">Summary only: platform counts, approvals, and status overview.</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading dashboard...</div>
+
+<div class="grid grid-4">
+  <div class="card stat"><span class="muted">Total Patients</span><br><strong>{{ stats().totalPatients }}</strong></div>
+  <div class="card stat"><span class="muted">Total Providers</span><br><strong>{{ stats().totalProviders }}</strong></div>
+  <div class="card stat"><span class="muted">Active Patients</span><br><strong>{{ stats().activePatients }}</strong></div>
+  <div class="card stat"><span class="muted">Blocked Patients</span><br><strong>{{ stats().blockedPatients }}</strong></div>
+  <div class="card stat"><span class="muted">Active Providers</span><br><strong>{{ stats().activeProviders }}</strong></div>
+  <div class="card stat"><span class="muted">Blocked Providers</span><br><strong>{{ stats().blockedProviders }}</strong></div>
+  <div class="card stat"><span class="muted">Pending Approval</span><br><strong>{{ stats().pendingProviders }}</strong></div>
+  <div class="card stat"><span class="muted">Rejected Providers</span><br><strong>{{ stats().rejectedProviders }}</strong></div>
+</div>
+
+<div class="grid grid-2" style="margin-top:18px">
+  <div class="card">
+    <h3>Recent Provider Approval Requests</h3>
+    <div *ngFor="let provider of recentProviderRequests()" class="review-row">
+      <b>{{ providerName(provider) }}</b>
+      <p class="muted">{{ provider.specialization || "Specialization not updated" }} - {{ provider.clinicName || "Clinic not updated" }}</p>
+      <span class="badge">Pending</span>
+    </div>
+    <div class="empty" *ngIf="!recentProviderRequests().length">No pending provider requests.</div>
+  </div>
+
+  <div class="card">
+    <h3>Recent Patient / Provider Status</h3>
+    <div *ngFor="let user of recentUsers()" class="review-row">
+      <b>{{ userName(user) }}</b>
+      <p class="muted">{{ user.email }}</p>
+      <span class="badge" [class.ok]="!isBlockedUser(user)">{{ statusLabel(user) }}</span>
+    </div>
+    <div class="empty" *ngIf="!recentUsers().length">No recent users returned.</div>
+  </div>
+</div>

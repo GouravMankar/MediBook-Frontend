@@ -1,0 +1,62 @@
+<div class="page-title">Logs / Notifications</div>
+<div class="page-sub">View notification logs and send bulk messages to patients or providers.</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading notification logs...</div>
+
+<div class="card" style="margin-bottom:18px">
+  <h3>Send Notification</h3>
+  <div class="form-grid">
+    <div>
+      <label>Audience</label>
+      <select [(ngModel)]="form.audience">
+        <option value="PATIENTS">All patients</option>
+        <option value="PROVIDERS">All providers</option>
+      </select>
+    </div>
+    <div>
+      <label>Type</label>
+      <input [(ngModel)]="form.type" />
+    </div>
+    <div>
+      <label>Title</label>
+      <input [(ngModel)]="form.title" />
+    </div>
+    <div>
+      <label>Channel</label>
+      <select [(ngModel)]="form.channel">
+        <option value="APP">APP</option>
+        <option value="EMAIL">EMAIL</option>
+        <option value="SMS">SMS</option>
+      </select>
+    </div>
+  </div>
+  <label style="margin-top:12px">Message</label>
+  <textarea [(ngModel)]="form.message"></textarea>
+  <button class="btn" style="margin-top:14px" (click)="send()">Send Bulk Message</button>
+</div>
+
+<div class="card table-wrap">
+  <h3>Notification Logs</h3>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Recipient</th>
+      <th>Type</th>
+      <th>Title</th>
+      <th>Message</th>
+      <th>Date</th>
+      <th>Action</th>
+    </tr>
+    <tr *ngFor="let notification of notifications()">
+      <td>#{{ notificationId(notification) }}</td>
+      <td>{{ notification.recipientId }}</td>
+      <td>{{ notification.type }}</td>
+      <td>{{ notification.title }}</td>
+      <td>{{ notification.message }}</td>
+      <td>{{ displayDate(notification) }}</td>
+      <td><button class="btn danger" (click)="delete(notification)">Delete</button></td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !notifications().length">No notification logs returned.</div>
+</div>

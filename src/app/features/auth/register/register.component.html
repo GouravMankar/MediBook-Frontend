@@ -1,0 +1,100 @@
+<div class="auth-shell">
+  <section>
+    <div class="brand-large">🏥 MediBook</div>
+
+    <h1>
+      Join MediBook.<br />
+      Book Smarter.<br />
+      Care Better.
+    </h1>
+
+    <p>
+      Create your account and access appointments, providers, records, payments,
+      and notifications from one platform.
+    </p>
+  </section>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="card auth-card">
+    <h2>Create account</h2>
+    <p class="muted">Register using backend API.</p>
+
+    <div class="oauth-row">
+      <button type="button" class="oauth-btn" (click)="registerWithGoogle()">
+        🔵 Google
+      </button>
+
+      <button type="button" class="oauth-btn" (click)="registerWithGithub()">
+        ⚫ GitHub
+      </button>
+    </div>
+
+    <div class="divider">
+      <span>or register with email</span>
+    </div>
+
+    <label>Full Name</label>
+    <input
+      formControlName="fullName"
+      type="text"
+      placeholder="Enter full name"
+    />
+    <small
+      class="field-error"
+      *ngIf="form.controls.fullName.touched && form.controls.fullName.invalid"
+    >
+      Full name is required
+    </small>
+
+    <label>Email</label>
+    <input formControlName="email" type="email" placeholder="Enter email" />
+    <small
+      class="field-error"
+      *ngIf="form.controls.email.touched && form.controls.email.invalid"
+    >
+      Valid email is required
+    </small>
+
+    <label>Password</label>
+    <input
+      formControlName="password"
+      type="password"
+      placeholder="Strong password"
+    />
+    <small
+      class="field-error"
+      *ngIf="form.controls.password.touched && form.controls.password.invalid"
+    >
+      {{ passwordMessage }}
+    </small>
+
+    <label>Phone</label>
+    <input
+      formControlName="phone"
+      type="text"
+      placeholder="Enter phone number"
+    />
+    <small
+      class="field-error"
+      *ngIf="form.controls.phone.touched && form.controls.phone.invalid"
+    >
+      Enter a valid 10-digit Indian mobile number
+    </small>
+
+    <label>Register As</label>
+    <select formControlName="role">
+      <option value="PATIENT">Patient</option>
+      <option value="PROVIDER">Provider</option>
+    </select>
+
+    <div class="error" *ngIf="error">{{ error }}</div>
+
+    <button class="btn" type="submit" [disabled]="loading || form.invalid">
+      {{ loading ? "Creating account..." : "Create account" }}
+    </button>
+
+    <p class="login-link">
+      Already have an account?
+      <a routerLink="/login">Login</a>
+    </p>
+  </form>
+</div>

@@ -1,0 +1,34 @@
+<div class="app-shell">
+  <aside class="sidebar" *ngIf="isLoggedIn()">
+    <div class="brand">
+      <div class="logo">MB</div>
+      <div>
+        <h2>MediBook</h2>
+        <span>{{ roleLabel() }}</span>
+      </div>
+    </div>
+
+    <nav>
+      <a *ngFor="let item of nav()" [routerLink]="item.path" routerLinkActive="active">
+        <span class="nav-icon">{{ item.icon }}</span>{{ item.label }}
+      </a>
+    </nav>
+
+    <button class="user-card" (click)="auth.logout()">
+      <div class="avatar">{{ initials(user()?.name) }}</div>
+      <div>
+        <strong>{{ user()?.name || "Login required" }}</strong>
+        <small>{{ user()?.email || "No account loaded" }}</small>
+      </div>
+      <span>Logout</span>
+    </button>
+  </aside>
+
+  <main class="main-area" [class.public-main]="!isLoggedIn()">
+    <header class="topbar" *ngIf="isLoggedIn()">
+      <strong>Book Smarter. Heal Faster. Care Better.</strong>
+      <button class="btn light" (click)="auth.logout()">Logout</button>
+    </header>
+    <section class="page-content"><router-outlet /></section>
+  </main>
+</div>

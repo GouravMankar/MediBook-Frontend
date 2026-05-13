@@ -1,0 +1,61 @@
+<div class="page-title">Medical Reports</div>
+<div class="page-sub">
+  Providers can add reports for completed appointments. Patients can view their reports here.
+</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading reports...</div>
+
+<div class="card" *ngIf="role === 'PROVIDER'" style="margin-bottom:18px">
+  <h3>Create Medical Report</h3>
+  <div class="form-grid">
+    <div>
+      <label>Completed Appointment</label>
+      <select [(ngModel)]="form.appointmentId">
+        <option [ngValue]="undefined">Select appointment</option>
+        <option *ngFor="let a of appointments()" [ngValue]="a.appointmentId">
+          #{{ a.appointmentId }} - {{ patientLabel(a.patientId, a.appointmentId) }}
+        </option>
+      </select>
+    </div>
+    <div>
+      <label>Report Date</label>
+      <input type="date" [(ngModel)]="form.reportDate" />
+    </div>
+    <div>
+      <label>Diagnosis</label>
+      <input [(ngModel)]="form.diagnosis" />
+    </div>
+    <div>
+      <label>Prescription</label>
+      <input [(ngModel)]="form.prescription" />
+    </div>
+  </div>
+  <label style="margin-top:12px">Notes</label>
+  <textarea [(ngModel)]="form.notes"></textarea>
+  <button
+    class="btn"
+    style="margin-top:14px"
+    [disabled]="!form.appointmentId || !form.diagnosis || !form.prescription"
+    (click)="create()"
+  >
+    Save Report
+  </button>
+</div>
+
+<div class="grid grid-2">
+  <div class="card" *ngFor="let report of reports()">
+    <h3>{{ report.diagnosis || "Medical Report" }}</h3>
+    <p class="muted">
+      Appointment #{{ report.appointmentId }} - {{ patientLabel(report.patientId, report.appointmentId) }} -
+      Provider {{ reportProviderLabel(report) }}
+    </p>
+    <p class="muted">Report date: {{ report.reportDate || report.createdAt || "-" }}</p>
+    <p><b>Prescription:</b> {{ report.prescription || "-" }}</p>
+    <p>{{ report.notes || "No additional notes." }}</p>
+  </div>
+</div>
+
+<div class="empty" *ngIf="!loading && !reports().length">
+  No medical reports returned from backend.
+</div>

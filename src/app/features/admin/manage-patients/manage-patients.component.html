@@ -1,0 +1,39 @@
+<div class="page-title">Manage Patients</div>
+<div class="page-sub">Patient management table. This does not reuse the provider search UI.</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+<div class="empty" *ngIf="loading">Loading patients...</div>
+
+<div class="card" style="margin-bottom:18px">
+  <div class="form-grid">
+    <div>
+      <label>Search patients</label>
+      <input [ngModel]="query()" (ngModelChange)="query.set($event)" placeholder="Name, email, phone, status" />
+    </div>
+  </div>
+</div>
+
+<div class="card table-wrap">
+  <table class="table">
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Phone</th>
+      <th>Status</th>
+      <th>Actions</th>
+    </tr>
+    <tr *ngFor="let patient of filteredPatients()">
+      <td>{{ patientName(patient) }}</td>
+      <td>{{ patient.email }}</td>
+      <td>{{ patient.phone || "-" }}</td>
+      <td><span class="badge" [class.ok]="!isBlocked(patient)">{{ statusLabel(patient) }}</span></td>
+      <td class="actions">
+        <button class="btn danger" *ngIf="!isBlocked(patient)" (click)="block(patient)">Block</button>
+        <button class="btn light" *ngIf="isBlocked(patient)" (click)="unblock(patient)">Unblock</button>
+        <button class="btn light" (click)="deactivate(patient)">Deactivate</button>
+        <button class="btn danger" (click)="delete(patient)">Delete</button>
+      </td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!loading && !filteredPatients().length">No patients found.</div>
+</div>

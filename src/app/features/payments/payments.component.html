@@ -1,0 +1,67 @@
+<div class="page-title">
+  {{ role === "PROVIDER" ? "Revenue" : "Payments" }}
+</div>
+
+<div class="page-sub">
+  Transaction history from payment-service. Payments are created automatically during slot booking.
+</div>
+
+<div class="empty" *ngIf="message">{{ message }}</div>
+
+<div class="grid grid-3" style="margin-bottom: 18px">
+  <div class="card stat">
+    <span class="muted">Total Transactions</span><br />
+    <strong>{{ payments().length }}</strong>
+  </div>
+
+  <div class="card stat">
+    <span class="muted">Total Amount</span><br />
+    <strong>Rs {{ total() }}</strong>
+  </div>
+
+  <div class="card stat">
+    <span class="muted">Role View</span><br />
+    <strong>{{ role }}</strong>
+  </div>
+</div>
+
+<div class="card table-wrap">
+  <h3>Full Transaction History</h3>
+  <table class="table">
+    <tr>
+      <th>ID</th>
+      <th>Appointment</th>
+      <th>Patient</th>
+      <th>Amount</th>
+      <th>Mode</th>
+      <th>Status</th>
+      <th>Transaction</th>
+      <th>Action</th>
+    </tr>
+
+    <tr *ngFor="let p of payments()">
+      <td>#{{ p.paymentId }}</td>
+      <td>{{ p.appointmentId }}</td>
+      <td>{{ p.patientId }}</td>
+      <td>Rs {{ p.amount }}</td>
+      <td>{{ p.mode }}</td>
+      <td>
+        <span class="badge">{{ p.status }}</span>
+      </td>
+      <td>{{ p.transactionId || "-" }}</td>
+      <td>
+        <button
+          class="btn light"
+          *ngIf="role === 'ADMIN' && p.status === 'PAID'"
+          (click)="refund(p)"
+        >
+          Refund
+        </button>
+      </td>
+    </tr>
+  </table>
+
+  <div class="empty" *ngIf="!payments().length">
+    No payments returned from backend.
+  </div>
+</div>

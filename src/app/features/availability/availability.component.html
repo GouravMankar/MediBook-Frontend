@@ -1,0 +1,75 @@
+<div class="page-title">Slot Management</div>
+<div class="page-sub">
+  Create, update, block, unblock, and delete available slots.
+</div>
+<div class="empty" *ngIf="message">{{ message }}</div>
+
+<div class="card" style="margin-bottom: 18px">
+  <h3>{{ editingSlotId ? "Update Slot" : "Add Slot" }}</h3>
+  <div class="form-grid">
+    <div>
+      <label>Date</label>
+      <input type="date" [(ngModel)]="form.date" />
+    </div>
+    <div>
+      <label>Start Time</label>
+      <input
+        type="time"
+        [(ngModel)]="form.startTime"
+        (change)="calculateDuration()"
+      />
+    </div>
+    <div>
+      <label>End Time</label>
+      <input
+        type="time"
+        [(ngModel)]="form.endTime"
+        (change)="calculateDuration()"
+      />
+    </div>
+    <div>
+      <label>Duration (minutes)</label>
+      <input type="number" [(ngModel)]="form.durationMinutes" readonly />
+    </div>
+  </div>
+  <div class="actions" style="margin-top: 14px">
+    <button class="btn" (click)="saveSlot()">
+      {{ editingSlotId ? "Update Slot" : "Add Slot" }}
+    </button>
+    <button class="btn light" *ngIf="editingSlotId" (click)="resetForm()">
+      Cancel Edit
+    </button>
+  </div>
+</div>
+
+<div class="card table-wrap">
+  <table class="table">
+    <tr>
+      <th>Date</th>
+      <th>Start</th>
+      <th>End</th>
+      <th>Duration</th>
+      <th>Booked</th>
+      <th>Blocked</th>
+      <th>Actions</th>
+    </tr>
+    <tr *ngFor="let s of slots()">
+      <td>{{ s.date }}</td>
+      <td>{{ s.startTime }}</td>
+      <td>{{ s.endTime }}</td>
+      <td>{{ s.durationMinutes || 0 }} min</td>
+      <td>{{ s.booked || s.isBooked }}</td>
+      <td>{{ s.blocked || s.isBlocked }}</td>
+      <td class="actions">
+        <button class="btn light" (click)="edit(s)">Edit</button>
+        <button class="btn light" (click)="toggle(s)">
+          {{ s.blocked || s.isBlocked ? "Unblock" : "Block" }}
+        </button>
+        <button class="btn danger" (click)="remove(s)">Delete</button>
+      </td>
+    </tr>
+  </table>
+  <div class="empty" *ngIf="!slots().length">
+    No slots returned from backend.
+  </div>
+</div>
