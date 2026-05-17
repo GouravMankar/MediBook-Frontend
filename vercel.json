@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/oauth2/:path*",
+      "destination": "http://13.60.197.51:8080/oauth2/:path*"
+    },
+    {
+      "source": "/login/oauth2/:path*",
+      "destination": "http://13.60.197.51:8080/login/oauth2/:path*"
+    }
+  ]
+}
