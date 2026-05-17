@@ -115,11 +115,11 @@ export class AuthService {
 
 
 loginWithGoogle(): void {
-  window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/google`;
+  window.location.href = `${environment.oauthBaseUrl}/oauth2/authorization/google`;
 }
 
 loginWithGithub(): void {
-  window.location.href = `${environment.apiBaseUrl}/oauth2/authorization/github`;
+  window.location.href = `${environment.oauthBaseUrl}/oauth2/authorization/github`;
 }
   private loadUser(): User | null {
     const raw = localStorage.getItem("medibook_user");
